@@ -12,6 +12,10 @@ import "./libraries/SafeERC20.sol";
 
 using SafeERC20 for IERC20;
 
+interface IOracle {
+	function getPrice(address baseAsset, address quoteAsset) external returns (uint); 
+}
+
 contract Bank {
 	address immutable owner;
 
