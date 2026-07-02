@@ -42,6 +42,7 @@ contract Lend {
 		//uint minLendingPercent;
 		//uint maxLendingPercent;
 		address payable bankAddress;
+		address oracle;
 	}
 	struct Position {
 		address user;
@@ -53,14 +54,14 @@ contract Lend {
 
 	mapping(bytes32 => LendingMarketDetails) public MARKET_DETAILS; // market_id -> MarketDetails
 
-	event MarketCreated(bytes32 marketId, address collateralAsset, address borrowAsset, uint initialMarginNumerator, uint initialMarginDenominator, uint maintenanceMarginNumerator, uint maintenanceMarginDenominator, address bankAddress);
+	event MarketCreated(bytes32 marketId, address collateralAsset, address borrowAsset, uint initialMarginNumerator, uint initialMarginDenominator, uint maintenanceMarginNumerator, uint maintenanceMarginDenominator, address bankAddress, address oracle);
 
-	function createMarket(address collateralAsset, address borrowAsset, uint initialMarginNumerator, uint initialMarginDenominator, uint maintenanceMarginNumerator, uint maintenanceMarginDenominator) external {
+	function createMarket(address collateralAsset, address borrowAsset, uint initialMarginNumerator, uint initialMarginDenominator, uint maintenanceMarginNumerator, uint maintenanceMarginDenominator, address oracle) external {
 		bytes32 marketId = getMarketId(collateralAsset, borrowAsset, initialMarginNumerator, initialMarginDenominator, maintenanceMarginNumerator, maintenanceMarginDenominator);
 		require(MARKET_DETAILS[marketId].bankAddress == address(0), "market has already been created");
 		address payable bankAddress = payable(address(new Bank(address(this))));
-		MARKET_DETAILS[marketId] = LendingMarketDetails(collateralAsset, borrowAsset, initialMarginNumerator, initialMarginDenominator, maintenanceMarginNumerator, maintenanceMarginDenominator, bankAddress);
-		emit MarketCreated(marketId, collateralAsset, borrowAsset, initialMarginNumerator, initialMarginDenominator, maintenanceMarginNumerator, maintenanceMarginDenominator, bankAddress);
+		MARKET_DETAILS[marketId] = LendingMarketDetails(collateralAsset, borrowAsset, initialMarginNumerator, initialMarginDenominator, maintenanceMarginNumerator, maintenanceMarginDenominator, bankAddress, oracle);
+		emit MarketCreated(marketId, collateralAsset, borrowAsset, initialMarginNumerator, initialMarginDenominator, maintenanceMarginNumerator, maintenanceMarginDenominator, bankAddress, oracle);
 	}
 
 	function getMarketId(address collateralAsset, address borrowAsset, uint initialMarginNumerator, uint initialMarginDenominator, uint maintenanceMarginNumerator, uint maintenanceMarginDenominator) public pure returns (bytes32) {
