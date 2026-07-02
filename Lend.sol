@@ -48,10 +48,15 @@ contract Lend {
 		address payable bankAddress;
 		address oracle;
 	}
-	struct Position {
+	struct BorrowPosition {
 		address user;
 		uint collateralAmount;
 		uint borrowAmount;
+		uint interestCounterStart;
+	}
+	struct LendPosition {
+		address user;
+		uint lendAmount;
 		uint interestCounterStart;
 	}
 	uint interestCounter = 0;
